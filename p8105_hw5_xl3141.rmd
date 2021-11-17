@@ -35,7 +35,7 @@ homocide_df =
   read_csv("data-homicides-master/homicide-data.csv", na = c("", "Unknown")) %>% 
   mutate(
     city_state = str_c(city, state),
-    resolution =case_when(
+    resolution = case_when(
       disposition == "Closed without arrest" ~ "unsolved",
       disposition == "Open/No arrest" ~ "unsolved",
       disposition == "Closed by arrest" ~ "solved"
@@ -171,7 +171,7 @@ participant_df %>%
     names_to = "week",
     values_to = "score"
   ) %>% 
-  ggplot(aes(x = week, y = score, color = arm_id, group = arm_id)) +
+  ggplot(aes(x = week, y = score, color = arm_id, group = arm_id)) + ## note: we need the group to be the same for lines
   geom_point() +
   geom_line() +
   facet_grid(. ~ arm)+
@@ -185,3 +185,38 @@ participant_df %>%
 
 The plot above shows the observations on each subject over time. In general, individuals in the control group don't have significant change on their score across 8 weeks while individuals from the experiment group seems to have an increase in the score across 8-week-time-period.
 
+## Problem 3
+
+```{r}
+
+set.seed(10)
+
+iris_with_missing = iris %>% 
+  map_df(~replace(.x, sample(1:150, 20), NA)) %>%
+  mutate(Species = as.character(Species))%>% 
+  janitor::clean_names()
+  
+```
+
+write a function
+
+```{r}
+
+fill_in_function = function(x){
+  
+  if(is.numeric(x)){
+    
+    replace(x, is.na(x), mean(x, na.rm = TRUE))
+    
+  }
+  else if(is.character(x)){
+    
+    replace(x, is.na(x), "virginica")
+    
+  }
+}
+
+new_df = map_df(iris_with_missing, fill_in_function)
+
+
+```
